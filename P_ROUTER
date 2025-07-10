@@ -1,0 +1,29 @@
+Hostname P_ROUTER
+
+interface FastEthernet0/1
+ description TO LAGPE 
+ip address 30.30.30.2 255.255.255.252
+ No shut
+ mpls ip
+
+
+interface FastEthernet0/0
+ description TO EDOPE 
+ip address 20.20.20.2 255.255.255.252
+ No shut
+ mpls ip
+
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+
+interface Loopback0
+ ip address 1.1.2.2  255.255.255.255
+
+
+router ospf 1
+Router-id 1.1.2.2
+ network 1.1.2.2 0.0.0.0 area 0
+ network 30.30.30.0 0.0.0.3 area 0
+ network 20.20.20.0 0.0.0.3 area 0
