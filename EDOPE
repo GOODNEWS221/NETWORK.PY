@@ -38,25 +38,6 @@ router ospf 1
 
 
 
-router bgp 60000
- bgp router-id 1.1.1.1
- bgp log-neighbor-changes
- neighbor 2.2.2.2 remote-as 60000
- neighbor 2.2.2.2 update-source Loopback0
- !
- address-family ipv4
-  neighbor 2.2.2.2 activate
- exit-address-family
- ! !
- address-family vpnv4
-  neighbor 2.2.2.2 activate
-  neighbor 2.2.2.2 send-community both
- exit-address-family
- !
- address-family ipv4 vrf PRESHHQ
-  redistribute ospf 100
- exit-address-family
-
  
 
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
