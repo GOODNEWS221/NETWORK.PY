@@ -1,6 +1,7 @@
 # NETWORK.PY
 
 
+<img width="1077" height="387" alt="NETWORK PY" src="https://github.com/user-attachments/assets/4fe6e60d-c60d-44f2-b5c7-ff2261a5d54d" />
 
 # 🧠 MPLS Layer 3 VPN: Multi-VRF Enterprise Simulation
 
