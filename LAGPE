@@ -1,0 +1,88 @@
+ip vrf PRESHBR
+ rd 100:1
+ route-target export 100:1
+ route-target import 100:1
+
+interface Loopback0
+ ip address 2.2.2.2  255.255.255.255
+
+interface F0/0
+ description to PRESHBR
+ ip vrf forwarding PRESHBR
+ ip address 40.40.40.1 255.255.255.0
+No shut
+
+
+interface FastEthernet0/1
+ description TO P_ROUTER
+ ip address 30.30.30.1 255.255.255.252
+ No shut
+ mpls ip
+
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+router ospf 100 vrf PRESHBR
+ router-id 2.2.2.2
+ redistribute bgp 60000 subnets
+ network 40.40.40.0 0.0.0.255 area 0
+
+
+router ospf 1
+ network 2.2.2.2 0.0.0.0 area 0
+ network 30.30.30.0 0.0.0.3 area 0
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ip vrf GOODBR
+ rd 100:2
+ route-target export 100:2
+ route-target import 100:2
+
+
+interface G3/0
+ description to GOODBR
+ ip vrf forwarding GOODBR
+ ip address 40.40.40.1 255.255.255.0
+
+
+
+router ospf 200 vrf GOODBR
+ router-id 2.2.2.1
+ redistribute bgp 60000 subnets
+ network 40.40.40.1 0.0.0.255 area 0
+
+
+
+
+
+router bgp 60000
+ bgp router-id 2.2.2.2
+ neighbor 1.1.1.1 remote-as 60000
+ neighbor 1.1.1.1 update-source Loopback0
+ !
+ address-family ipv4
+  neighbor 1.1.1.1 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 1.1.1.1 activate
+  neighbor 1.1.1.1 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf PRESHBR
+  redistribute ospf 100
+ exit-address-family
+ !
+ address-family ipv4 vrf GOODBR
+  redistribute ospf 200
+ exit-address-family
+
+ 
+
+
+
+
+
