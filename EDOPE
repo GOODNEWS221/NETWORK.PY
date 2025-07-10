@@ -1,0 +1,111 @@
+Hostname EDOPE
+
+ip vrf PRESHHQ
+ rd 100:1
+ route-target export 100:1
+ route-target import 100:1
+
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+
+interface GigabitEthernet3/0
+ description to PRESHHQ
+ ip vrf forwarding PRESHHQ
+ ip address 10.10.10.1 255.255.255.0
+ negotiation auto
+
+
+interface FastEthernet0/0
+ description TO P_ROUTER
+ ip address 20.20.20.1 255.255.255.252
+ speed auto
+ duplex auto
+ mpls ip
+
+mpls ip
+mpls label protocol ldp
+mpls ldp router-id Loopback0 force
+
+router ospf 100 vrf PRESHHQ
+ router-id 1.1.1.1
+ redistribute bgp 60000 subnets
+ network 10.10.10.0 0.0.0.255 area 0
+
+
+router ospf 1
+ network 1.1.1.1 0.0.0.0 area 0
+ network 20.20.20.0 0.0.0.3 area 0
+
+
+
+router bgp 60000
+ bgp router-id 1.1.1.1
+ bgp log-neighbor-changes
+ neighbor 2.2.2.2 remote-as 60000
+ neighbor 2.2.2.2 update-source Loopback0
+ !
+ address-family ipv4
+  neighbor 2.2.2.2 activate
+ exit-address-family
+ ! !
+ address-family vpnv4
+  neighbor 2.2.2.2 activate
+  neighbor 2.2.2.2 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf PRESHHQ
+  redistribute ospf 100
+ exit-address-family
+
+ 
+
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ip vrf GOODHQ
+ rd 100:2
+ route-target export 100:2
+ route-target import 100:2
+
+
+interface F0/1
+ description to GOODHQ
+ ip vrf forwarding GOODHQ
+ ip address 10.10.10.1 255.255.255.0
+
+
+
+router ospf 200 vrf GOODHQ
+ router-id 1.1.1.2
+ redistribute bgp 60000 subnets
+ network 10.10.10.0 0.0.0.255 area 0
+
+
+
+
+
+router bgp 60000
+ bgp router-id 1.1.1.1
+ neighbor 2.2.2.2 remote-as 60000
+ neighbor 2.2.2.2 update-source Loopback0
+ !
+ address-family ipv4
+  neighbor 2.2.2.2 activate
+ exit-address-family
+ !
+ address-family vpnv4
+  neighbor 2.2.2.2 activate
+  neighbor 2.2.2.2 send-community both
+ exit-address-family
+ !
+ address-family ipv4 vrf PRESHHQ
+  redistribute ospf 100
+ exit-address-family
+ !
+ address-family ipv4 vrf GOODHQ
+  redistribute ospf 200
+ exit-address-family
+
+ 
+
+
+
