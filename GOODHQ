@@ -1,0 +1,21 @@
+hostname GOODHQ
+!
+interface f0/1
+ ip address 10.10.10.2 255.255.255.0
+No sh 
+Desc TO EDOPE
+
+!
+interface F0/0
+ ip address 192.168.1.1 255.255.255.0
+No sh 
+Desc TO LAN
+
+Int loopback0
+Ip add 3.3.3.4  255.255.255.255
+
+router ospf 200
+ router-id 3.3.3.4
+ network 192.168.1.0 0.0.0.255 area 0
+network 10.10.10.0  0.0.0.255 area 0
+Network 3.3.3.4 0.0.0.0 area 0
